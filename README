@@ -39,3 +39,7 @@ forms that is verified in addition to the cookie.
 
 Crumblr works with well with resources. Crumbs are verified for all
 HTTP verbs but GET as GET is commonly used w/o form submission.
+
+== License & Author
+
+:include: LICENSE
