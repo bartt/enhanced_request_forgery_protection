@@ -1,6 +1,10 @@
-module CrumbTagsHelper
+module CrumbTagsHelper #:doc:
 
-  # Renders 2 hidden tags named _crumb and _timestamp
+  # +crumb_tags+ renders 2 hidden tags named +_crumb+ and +_timestamp+
+  # that can be verified by action controller filter +verify_crumb+ to
+  # ensure that the form submission came from a trusted source.
+  #
+  # The value of +_crumb+ is set by +issue_crumb+.
   def crumb_tags
     timestamp = Time.now().to_i
     return "

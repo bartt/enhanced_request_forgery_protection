@@ -1,4 +1,41 @@
-Crumblr
-=======
+= Crumblr
 
-Description goes here
+A plugin to protect against Cross-Site Request Forgery. From
+http://en.wikipedia.org/wiki/Crsf:
+
+<i>Cross-site request forgery, also known as one click attack or session
+riding and abbreviated as CSRF (Sea-Surf) or XSRF, is a kind of
+malicious exploit of websites. Although this type of attack has
+similarities to cross-site scripting (XSS), cross-site scripting
+requires the attacker to inject unauthorized code into a website,
+while cross-site request forgery merely transmits unauthorized
+commands from a user the website trusts.</i>
+
+== Prevention
+
+For the web site, switching from a persistent authentication method
+(e.g. a cookie or HTTP authentication) to a transient authentication
+method (e.g. a hidden field provided on every form) will help prevent
+these attacks. Use Crumblr to include a secret, user-specific token in
+forms that is verified in addition to the cookie.
+
+== Example usage
+
+  app/controllers/account_controller.rb:
+
+    class AccountController < ApplicationController
+      before_filter :verify_crumb
+      ...
+    end
+
+  app/views/account/login.rhtml:
+
+    <% form_for :form, :url => {:action=> "login"} do |f| -%>
+      <%= crumb_tags %>
+      ...
+    <% end -%>
+
+== Resources compatible
+
+Crumblr works with well with resources. Crumbs are verified for all
+HTTP verbs but GET as GET is commonly used w/o form submission.
