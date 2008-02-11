@@ -40,6 +40,12 @@ forms that is verified in addition to the cookie.
 Crumblr works with well with resources. Crumbs are verified for all
 HTTP verbs but GET as GET is commonly used w/o form submission.
 
+== Cookie Session Store Incompatible
+
+Crumblr relies on constant session IDs to verify that an issued crumb
+is valid. Session cookie change everytime data is added to the
+session, which renders this store incompatible with Crumblr.
+
 == License & Author
 
 :include: LICENSE
