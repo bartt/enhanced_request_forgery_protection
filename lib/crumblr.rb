@@ -7,8 +7,9 @@ require 'openssl'
 # 
 # Because crumb verification is a request filter one can't pass
 # variables to a +verify_crumb+. But because Crumblr gets mixed into
-# ActionController one can use class attributes to pass information to
-# +verify_crumb+ and +issue_crumb+. Crumblr uses the following attributes:
+# ActionController one can use class instance variables to pass
+# information to +verify_crumb+ and +issue_crumb+. Crumblr uses the
+# following attributes:
 # 
 # <tt>crumb_window</tt>::
 #     The time window within which the form has to be submitted and
@@ -26,14 +27,25 @@ require 'openssl'
 
 module Crumblr 
 
-  @@crumb_window ||= 15.minutes
-  @@crumb_flash_msg ||= 'Form submission timed out. Please resubmit.'
-  @@crumb_scope ||= self.class
-
   def self.included(base) #:nodoc:
+    base.send(:extend, ClassMethods)
     base.send(:include, InstanceMethods)
     base.class_eval do
       helper_method :issue_crumb
+    end
+  end
+
+  module ClassMethods
+    def crumb_scope
+      @crumb_scope ||= self.name
+    end
+
+    def crumb_window
+      @crumb_window ||= '15.minutes'
+    end
+
+    def crumb_flash_msg
+      @crumb_flash_msg ||= 'Form submission timed out. Please resubmit.'
     end
   end
 
@@ -59,7 +71,7 @@ module Crumblr
     #     A random string acting as salt
     def issue_crumb(timestamp)
       session[:crumb_secret] = String.rand(6) unless session[:crumb_secret] 
-      signature = "#{request.remote_ip}#{timestamp}#{cookies[:_session_id]}#{@@crumb_scope}#{session[:crumb_secret]}"
+      signature = "#{request.remote_ip}#{timestamp}#{cookies[:_session_id]}#{self.class.crumb_scope}#{session[:crumb_secret]}"
       logger.debug("_session_id = #{cookies[:_session_id]}
 signature = #{signature}")
       OpenSSL::Digest::SHA1.hexdigest(signature)
@@ -77,11 +89,11 @@ signature = #{signature}")
     # referer</em> receive a 404.
     def verify_crumb 
       if (request.post? || request.put? || request.delete?) then
-        logger.debug("Crumb window = #{@@crumb_window}\nCrumb flash msg = #{@@crumb_flash_msg}")
+        logger.debug("Crumb window = #{self.class.crumb_window}\nCrumb flash msg = #{self.class.crumb_flash_msg}")
         if (defined?(params[:_crumb]) && 
               defined?(params[:_timestamp]) && 
-              Time.at(params[:_timestamp].to_i) + @@crumb_window > Time.now &&
-              (params[:_crumb] == OpenSSL::Digest::SHA1.hexdigest("#{request.remote_ip}#{params[:_timestamp]}#{cookies[:_session_id]}#{@@crumb_scope}#{session[:crumb_secret]}"))) then
+              Time.at(params[:_timestamp].to_i) + self.class.crumb_window > Time.now &&
+              (params[:_crumb] == OpenSSL::Digest::SHA1.hexdigest("#{request.remote_ip}#{params[:_timestamp]}#{cookies[:_session_id]}#{self.class.crumb_scope}#{session[:crumb_secret]}"))) then
           return true
         else
           logger.warn("Invalid crumb:
@@ -89,7 +101,7 @@ _crumb = #{params[:_crumb]}
 _timestamp = #{params[:_timestamp]}
 remote_ip = #{request.remote_ip}
 _session_id = #{cookies[:_session_id]}
-scope = #{@@crumb_scope}
+scope = #{self.class.crumb_scope}
 crumb_secret = #{session[:crumb_secret]}
 digest = #{OpenSSL::Digest::SHA1.hexdigest("#{request.remote_ip}#{params[:_timestamp]}#{cookies[:_session_id]}#{session[:crumb_secret]}")}")
           # Return the visitor to the origin of the request. Most
@@ -98,7 +110,7 @@ digest = #{OpenSSL::Digest::SHA1.hexdigest("#{request.remote_ip}#{params[:_times
           # external site. Crumblr's goal is to only accept requests
           # from specific local origins.
           if request.env['HTTP_REFERER']
-            flash[:warning] = @@crumb_flash_msg
+            flash[:warning] = self.class.crumb_flash_msg
             redirect_to request.env['HTTP_REFERER'] 
           else
             # Return standard 404 message. Let the ActionController's
