@@ -41,7 +41,7 @@ module Crumblr
     end
 
     def crumb_window
-      @crumb_window ||= '15.minutes'
+      @crumb_window ||= 15.minutes
     end
 
     def crumb_flash_msg
@@ -89,7 +89,6 @@ signature = #{signature}")
     # referer</em> receive a 404.
     def verify_crumb 
       if (request.post? || request.put? || request.delete?) then
-        logger.debug("Crumb window = #{self.class.crumb_window}\nCrumb flash msg = #{self.class.crumb_flash_msg}")
         if (defined?(params[:_crumb]) && 
               defined?(params[:_timestamp]) && 
               Time.at(params[:_timestamp].to_i) + self.class.crumb_window > Time.now &&
