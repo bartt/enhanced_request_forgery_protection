@@ -72,7 +72,8 @@ module Crumblr
     def issue_crumb(timestamp)
       session[:crumb_secret] = String.rand(6) unless session[:crumb_secret] 
       signature = "#{request.remote_ip}#{timestamp}#{cookies[:_session_id]}#{self.class.crumb_scope}#{session[:crumb_secret]}"
-      logger.debug("_session_id = #{cookies[:_session_id]}
+      logger.debug("Issued crumb:
+_session_id = #{cookies[:_session_id]}
 signature = #{signature}")
       OpenSSL::Digest::SHA1.hexdigest(signature)
     end
