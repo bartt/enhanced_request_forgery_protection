@@ -7,9 +7,9 @@ module CrumbTagsHelper #:doc:
   # The value of +_crumb+ is set by +issue_crumb+.
   def crumb_tags
     timestamp = Time.now().to_i
-    return "
-#{tag(:input, {:type => 'hidden', :name => '_crumb', :value => issue_crumb(timestamp)})}
-#{tag(:input, {:type => 'hidden', :name => '_timestamp', :value => timestamp})}"
+    %(
+<input type="hidden" name="_crumb" value="#{issue_crumb(timestamp)}"/>
+<input type="hidden" name="_timestamp" value="#{timestamp}"/>).html_safe
   end
 
   # +crumb_params+ returns a hash of query parameters to be used by
@@ -19,6 +19,6 @@ module CrumbTagsHelper #:doc:
   # The value of +_crumb+ is set by +issue_crumb+.
   def crumb_params
     timestamp = Time.now().to_i
-    return { '_crumb' => issue_crumb(timestamp), '_timestamp' => timestamp}
+    { '_crumb' => issue_crumb(timestamp), '_timestamp' => timestamp}
   end
 end
