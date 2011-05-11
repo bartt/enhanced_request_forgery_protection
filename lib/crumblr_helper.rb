@@ -1,4 +1,4 @@
-module CrumbTagsHelper #:doc:
+module CrumblrHelper #:doc:
 
   # +crumb_tags+ renders 2 hidden tags named +_crumb+ and +_timestamp+
   # that can be verified by action controller filter +verify_crumb+ to
@@ -14,7 +14,8 @@ module CrumbTagsHelper #:doc:
 
   # +crumb_params+ returns a hash of query parameters to be used by
   # +url_for+ and family. Use +crumb_params+ if you can't use POST and
-  # have to use GET submission.
+  # have to use GET submission (perhaps in combination with the +_method+
+  # parameter.
   #
   # The value of +_crumb+ is set by +issue_crumb+.
   def crumb_params

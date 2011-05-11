@@ -1,7 +1,0 @@
-author: Bart Teeuwisse
-summary: A plugin to protect against Cross-Site Request Forgery.
-homepage: http://thecodemill.biz/
-plugin: http://thecodemill.biz/repository/plugins/crumblr/
-license: LGPL
-version: 1.2
-rails_version: 1.2+
