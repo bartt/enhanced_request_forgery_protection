@@ -12,11 +12,11 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "crumblr"
-  gem.homepage = "http://github.com/bartt/crumblr"
+  gem.name = "enhanced_request_forgery_protection"
+  gem.homepage = "http://github.com/bartt/enhanced_request_forgery_protection"
   gem.license = "MIT"
-  gem.summary = "A Rails plugin to protect against Cross-Site Request Forgery."
-  gem.description = "Add transient authentication to your persistent authentication that can be arbitrarily scoped."
+  gem.summary = "A Rails plugin to enhance Rails's basic protect against Cross-Site Request Forgery with scopes and time windows."
+  gem.description = "Add scopes and time windows to Rails's CSRF protection. Redirect to referrer with a flash message when possible."
   gem.email = "bart.teeuwisse@thecodemill.biz"
   gem.authors = ["Bart Teeuwisse"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
@@ -43,12 +43,12 @@ Cucumber::Rake::Task.new(:features)
 task :default => :spec
 
 require 'rake/rdoctask'
-desc 'Generate documentation for the crumblr plugin.'
+desc 'Generate documentation for the enhanced_request_forgery_protection plugin.'
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "crumblr #{version}"
+  rdoc.title = "enhanced_request_forgery_protection #{version}"
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')

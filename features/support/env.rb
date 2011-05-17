@@ -8,6 +8,6 @@ rescue Bundler::BundlerError => e
 end
 
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../../lib')
-require 'crumblr'
+require 'enhanced_request_forgery_protection'
 
 require 'rspec/expectations'
