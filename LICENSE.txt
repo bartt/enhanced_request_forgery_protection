@@ -1,4 +1,4 @@
-Crumblr, a Ruby on Rails plugin to protect against Cross-Site Request Forgery
+EnhancedRequestForgeryProtection, a Ruby on Rails plugin to enhance Rails' build in protection against Cross-Site Request Forgery
 
 Copyright (C) 2007 Bart Teeuwisse <bart [dot] teeuwisse [at] thecodemill.biz>
 

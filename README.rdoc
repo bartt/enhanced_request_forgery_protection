@@ -1,4 +1,4 @@
-= Crumblr
+= EnhancedRequestForgeryProtection
 
 A plugin to protect against Cross-Site Request Forgery. From
 http://en.wikipedia.org/wiki/Crsf:
@@ -16,37 +16,20 @@ commands from a user the website trusts.</i>
 For the web site, switching from a persistent authentication method
 (e.g. a cookie or HTTP authentication) to a transient authentication
 method (e.g. a hidden field provided on every form) will help prevent
-these attacks. Use Crumblr to include a secret, user-specific token in
-forms that is verified in addition to the cookie.
+these attacks. Use RequestForgeryProtection to include a secret,
+user-specific token in forms that is verified in addition to the cookie.
 
-== Example usage
+EnhancedRequestForgeryProtection extends Rails' RequestForgeryProtection with scopes and time windows. By default
+authentication tokens are scoped to the controller, but can be arbitrarily defined. The default time window is 1 hour.
+Form submissions that come in outside the time window will be rejected. Scopes and time windows are useful when you
+want to protect certain areas more tightly then others. For example you might want to use a 15 minute time window for
+all actions that modify the user's account.
 
-  app/controllers/account_controller.rb:
+Requests that fail authentication are redirected back to the referring URL. Typically this will be the page where the form
+originated. The user will receive a new authentication token and can resubmit the form. If it is no referring URL then
+the response will be Unprocessable Entity (HTTP code 422) just like the stock RequestForgeryProtection.
 
-    class AccountController < ApplicationController
-      before_filter :verify_crumb
-      ...
-    end
-
-  app/views/account/login.rhtml:
-
-    <% form_for :form, :url => {:action=> "login"} do |f| -%>
-      <%= crumb_tags %>
-      ...
-    <% end -%>
-
-== Resources compatible
-
-Crumblr works with well with resources. Crumbs are verified for all
-HTTP verbs but GET as GET is commonly used w/o form submission.
-
-== Cookie Session Store Incompatible
-
-Crumblr relies on constant session IDs to verify that an issued crumb
-is valid. Session cookie change everytime data is added to the
-session, which renders this store incompatible with Crumblr.
-
-== Contributing to crumblr
+== Contributing to EnhancedRequestForgeryProtection
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
