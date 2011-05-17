@@ -1,4 +1,5 @@
 *.gemspec
+.rakeTasks
 
 # rcov generated
 coverage
