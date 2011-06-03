@@ -75,7 +75,6 @@ module EnhancedRequestForgeryProtection
       # * Does the form_authenticity_token match the given token value from the params?
       # * Does the X-CSRF-Token header match the form_authenticity_token
       def verified_request?
-        debugger
         return true if !protect_against_forgery? || request.get?
         @token = params[request_forgery_protection_token]
         @stamped_at, @digest = split_request_authenticity_token
@@ -90,20 +89,22 @@ module EnhancedRequestForgeryProtection
             else
               log_authenticity_mismatch("Invalid X-CSRF-Token header")
               flash[:warning] = self.class.authenticity_invalid_msg
-              within_authenticity_window? && false
+              false
             end
           else
             log_authenticity_mismatch("Invalid #{request_forgery_protection_token}")
             flash[:warning] = self.class.authenticity_invalid_msg
-            within_authenticity_window? && false
+            false
           end
         end
       end
 
       # Generates a timestamped authenticity token
       def form_authenticity_token
-        @stamped_at = timestamp
-        "#{@stamped_at}#{hexdigest}"
+        @private_form_authenticity_token ||= begin
+          @stamped_at = timestamp
+          "#{@stamped_at}#{hexdigest}"
+        end
       end
 
       # Sets the token value for the current session.
@@ -111,18 +112,24 @@ module EnhancedRequestForgeryProtection
         session[:_csrf_token] ||= ActiveSupport::SecureRandom.base64(32)
       end
 
+      # Create a 10 digit timestamp for the current time
       def timestamp
         "%010d" % Time.now().to_i
       end
 
+      # Create a hexadecimal digest of the request's remote IP address, the timestamp of the form authenticity token,
+      # the CSRF token and the class' authenticity scope
       def hexdigest
         OpenSSL::Digest::SHA1.hexdigest("#{request.remote_ip}#{@stamped_at}#{csrf_token}#{self.class.authenticity_scope}")
       end
 
+      # Split the request's authenticity token into the 2 components it is made up from: the timestamp of the token and
+      # the hexadecimal digest.
       def split_request_authenticity_token
         @token.respond_to?(:[]) ? [@token[0..9], @token[10..-1]] : [nil, nil]
       end
 
+      # Check if the request falls within the authenticity window of the class.
       def within_authenticity_window?
         if Time.at(@stamped_at.to_i) + self.class.authenticity_window > Time.now
           true
@@ -147,4 +154,6 @@ module EnhancedRequestForgeryProtection
   end
 end
 
-ActionController::Base.send(:include, EnhancedRequestForgeryProtection) if defined?(ActionController::RequestForgeryProtection)
+if defined?(ActionController::RequestForgeryProtection)
+  ActionController::Base.send(:include, EnhancedRequestForgeryProtection)
+end
