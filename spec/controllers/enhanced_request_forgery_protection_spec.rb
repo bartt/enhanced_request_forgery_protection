@@ -1,8 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-class ApplicationController < ActionController::Base
-end
-
 describe "EnhancedRequestForgeryProtection" do
   describe "ClassMethods" do
     it "should assign an anonimous class the correct defaults" do

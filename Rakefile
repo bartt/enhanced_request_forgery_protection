@@ -43,7 +43,7 @@ Cucumber::Rake::Task.new(:features)
 task :default => :spec
 
 require 'rake/rdoctask'
-desc 'Generate documentation for the enhanced_request_forgery_protection plugin.'
+desc 'Generate documentation for the enhanced_request_forgery_protection.'
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
