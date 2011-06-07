@@ -155,5 +155,7 @@ module EnhancedRequestForgeryProtection
 end
 
 if defined?(ActionController::RequestForgeryProtection)
-  ActionController::Base.send(:include, EnhancedRequestForgeryProtection)
+  ActiveSupport.on_load(:action_controller) do
+    include EnhancedRequestForgeryProtection
+  end
 end
